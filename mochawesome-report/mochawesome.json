@@ -1,0 +1,197 @@
+{
+  "stats": {
+    "suites": 3,
+    "tests": 4,
+    "passes": 4,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-02-24T18:01:15.287Z",
+    "end": "2025-02-24T18:01:15.317Z",
+    "duration": 30,
+    "testsRegistered": 4,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "461670a3-e1b2-41d1-b67a-16a04637f57c",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "67efafb5-f2f8-4a36-bf9e-eda233c05810",
+          "title": "Add Post",
+          "fullFile": "/Users/kamalnanda/Desktop/MakeMyDay/backend/src/posts/tests/add_post.test.js",
+          "file": "/src/posts/tests/add_post.test.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should return 200 if post is added successfully in db",
+              "fullTitle": "Add Post should return 200 if post is added successfully in db",
+              "timedOut": false,
+              "duration": 20,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "request(app)\n    .post('/mmd/v1/posts/create-post')\n    .send({\n        type : 'video' , \n        title : 'Happy Video'  ,\n        description : 'This is a description',\n        tags : ['meme', 'funny']  ,\n        media_id : 'f6f19735-553c-4e2a-9c07-6c65df9bd47c',\n        external_url: 'kamal',\n    })\n    .expect(200)\n    .end((err, res) => {\n        if (err) return done(err);\n        expect(res.body).to.have.property('status', true);\n        done();\n    });",
+              "err": {},
+              "uuid": "612638e1-9fb8-4a18-a4a2-24954a19ea8c",
+              "parentUUID": "67efafb5-f2f8-4a36-bf9e-eda233c05810",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "612638e1-9fb8-4a18-a4a2-24954a19ea8c"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 20,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 4000
+        },
+        {
+          "uuid": "15184588-e4a4-4a7e-9655-506f5c71ae26",
+          "title": "Check tag existence and insert function expected outcome",
+          "fullFile": "/Users/kamalnanda/Desktop/MakeMyDay/backend/src/posts/tests/add_tag.test.js",
+          "file": "/src/posts/tests/add_tag.test.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "it should return 2 when [\"funny\",\"meme\"] is passed",
+              "fullTitle": "Check tag existence and insert function expected outcome it should return 2 when [\"funny\",\"meme\"] is passed",
+              "timedOut": false,
+              "duration": 2,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let result = await check_tag_existence_and_insert(['funny', 'meme'],'f4571bc0-f2d5-11ef-aa95-932b1e83d8cc')\nassert.equal(result.length, 2)",
+              "err": {},
+              "uuid": "ca569d79-722e-4747-9b28-7e2f9e8123e6",
+              "parentUUID": "15184588-e4a4-4a7e-9655-506f5c71ae26",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "it should return 3 when [\"funny\",\"bitcoin\", \"dog\"] is passed",
+              "fullTitle": "Check tag existence and insert function expected outcome it should return 3 when [\"funny\",\"bitcoin\", \"dog\"] is passed",
+              "timedOut": false,
+              "duration": 2,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let result = await check_tag_existence_and_insert([\"funny\",\"bitcoin\", \"dog\"],'f4571bc0-f2d5-11ef-aa95-932b1e83d8cc')\nassert.equal(result.length, 3)",
+              "err": {},
+              "uuid": "0e8def8b-7c53-4640-91fc-77e38d6d1225",
+              "parentUUID": "15184588-e4a4-4a7e-9655-506f5c71ae26",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "ca569d79-722e-4747-9b28-7e2f9e8123e6",
+            "0e8def8b-7c53-4640-91fc-77e38d6d1225"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 4,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 4000
+        },
+        {
+          "uuid": "aac0fda2-c601-4f49-b766-36480d7c1f7e",
+          "title": "Check create_instances_in_tns_post_vs_tag_table function expected outcome",
+          "fullFile": "/Users/kamalnanda/Desktop/MakeMyDay/backend/src/posts/tests/add_tns_post_vs_tag_instance.test.js",
+          "file": "/src/posts/tests/add_tns_post_vs_tag_instance.test.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "it should return 2 when [\"f4571bc0-f2d5-11ef-aa95-932b1e83d8cc\",\"f45769e0-f2d5-11ef-aa95-932b1e83d8cc\"] is passed",
+              "fullTitle": "Check create_instances_in_tns_post_vs_tag_table function expected outcome it should return 2 when [\"f4571bc0-f2d5-11ef-aa95-932b1e83d8cc\",\"f45769e0-f2d5-11ef-aa95-932b1e83d8cc\"] is passed",
+              "timedOut": false,
+              "duration": 5,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let result = await create_instances_in_tns_post_vs_tag_table(['f45769e0-f2d5-11ef-aa95-932b1e83d8cc', 'f4571bc0-f2d5-11ef-aa95-932b1e83d8cc'],'fd98a550-f2d5-11ef-b655-212c7c81ee1b','f4571bc0-f2d5-11ef-aa95-932b1e83d8cc')\nassert.equal(result.length, 2)",
+              "err": {},
+              "uuid": "c8c1ed7c-3a99-4c8f-80d7-b894d5557faa",
+              "parentUUID": "aac0fda2-c601-4f49-b766-36480d7c1f7e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "c8c1ed7c-3a99-4c8f-80d7-b894d5557faa"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 4000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 4000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.1.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.2.0"
+    }
+  }
+}
