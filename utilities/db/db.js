@@ -2,18 +2,18 @@ import { Sequelize } from "sequelize";
 import { Logger } from "../logger.js";
 
 // Option 1: Passing a connection URI
-
+// postgresql://postgres:qBhNtOVZpNmkwwIhBvPxJKzbiRzuEcbD@interchange.proxy.rlwy.net:17860/railway
 const db_config={
-    host: 'localhost',
-    port: 5432,
+    host: 'interchange.proxy.rlwy.net',
+    port: 17860,
     logging: false,
     dialect: 'postgres',
     schema: 'public'
 }
 let db = new Sequelize(
+    'railway',
     'postgres',
-    'postgres',
-    'kamal',
+    'qBhNtOVZpNmkwwIhBvPxJKzbiRzuEcbD',
     db_config
 )
 
