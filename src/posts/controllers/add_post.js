@@ -8,7 +8,17 @@ export const add_post = async (req, res) => {
     const payload = req.body
     try{
         Logger(reqId).info(`Request recieved to add a new post with payload - ${JSON.stringify(payload)}`);
-
+        const is_post_exists_with_title = await MasterPost.findOne({
+            where: {
+                title: payload.title
+            }
+        })
+        if(is_post_exists_with_title){
+            return res.status(400).json({
+                status: false,
+                message: 'Post already exists with provided title'
+            })
+        }
         // Save Post to DB
         const post = new MasterPost({
             type: payload.type,
