@@ -1,3 +1,4 @@
+import { Logger } from "../../../utilities/logger.js";
 import Contacts from "../models/contact_model.js"
 
 export const fetch_messages = async (req, res) => {
