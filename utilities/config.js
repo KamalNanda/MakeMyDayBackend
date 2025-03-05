@@ -1,0 +1,1 @@
+resend_api_key = "re_bksCqEME_2q1VsTgvY463cgdqeLJSo4kz"

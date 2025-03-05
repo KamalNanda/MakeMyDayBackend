@@ -22,12 +22,17 @@ const options = {
         name: "Posts",
         description: "API for Posts",
       },
+      {
+        name: "Messages",
+        description: "API for Contact Me",
+      },
     ],
   },
   apis: [
     "./server.js", 
     "./src/posts/controllers/add_post.js",
-    "./src/posts/controllers/fetch_all_posts.js"
+    "./src/posts/controllers/fetch_all_posts.js",
+    "./src/contact/controllers/fetch_messages.js"
   ],
 };
 
