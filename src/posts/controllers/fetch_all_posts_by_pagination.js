@@ -77,7 +77,7 @@ export const fetch_all_posts_by_pagination = async (req, res) => {
  *        - Posts
  *      summary: API to fetch all posts
  *      description: API to fetch all posts
- *      operationId: fetchPosts  
+ *      operationId: fetchPostsByP
  *      parameters:
  *         - name: page
  *           in: query
