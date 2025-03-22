@@ -32,7 +32,8 @@ const options = {
     "./server.js", 
     "./src/posts/controllers/add_post.js",
     "./src/posts/controllers/fetch_all_posts.js",
-    "./src/contact/controllers/fetch_messages.js"
+    "./src/contact/controllers/fetch_messages.js",
+    "./src/posts/controllers/fetch_all_posts_by_pagination.js"
   ],
 };
 
