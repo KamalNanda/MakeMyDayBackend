@@ -28,6 +28,10 @@ MasterPost.init({
         media_url: {
             type: DataTypes.TEXT, 
             allowNull: true
+        },
+        post_date: {
+            type: DataTypes.TEXT,
+            allowNull: true
         }
     },
     {

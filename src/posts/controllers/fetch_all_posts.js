@@ -12,6 +12,7 @@ export const fetch_all_posts = async (req, res) => {
                 p.type,
                 p.external_url,
                 p.media_url, 
+                p.post_date,
                 array_agg(t.tag ORDER BY t.tag) FILTER (WHERE t.tag IS NOT NULL) AS tags,
                	p.created_at
             FROM 
@@ -21,7 +22,7 @@ export const fetch_all_posts = async (req, res) => {
             LEFT JOIN 
                 mst_tags t ON pt.tag_id = t.id
             GROUP BY 
-                p.id, p.title, p.description, p.type, p.external_url, p.media_url,p.created_at
+                p.id, p.title, p.description, p.type, p.external_url, p.media_url,p.post_date, p.created_at
             ORDER BY 
                 p.created_at DESC;
         `

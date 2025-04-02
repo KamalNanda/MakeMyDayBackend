@@ -25,7 +25,8 @@ export const add_post = async (req, res) => {
             title: payload.title,
             description: payload.description, 
             media_url: payload.media_url,
-            external_url: payload.external_url
+            external_url: payload.external_url,
+            post_date: payload.post_date
         })
         
         await post.save();
