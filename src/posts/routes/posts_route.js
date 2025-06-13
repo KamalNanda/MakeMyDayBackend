@@ -3,6 +3,7 @@ import { generate_uuid_middleware } from "../../../utilities/middlewares/generat
 import { add_post } from "../controllers/add_post.js";
 import { fetch_all_posts } from "../controllers/fetch_all_posts.js";
 import { fetch_all_posts_by_pagination } from "../controllers/fetch_all_posts_by_pagination.js";
+import { fetch_post_by_id } from "../controllers/fetch_post_by_id.js";
 
 const post_routes = express.Router();
 
@@ -23,6 +24,11 @@ post_routes.get(
   fetch_all_posts_by_pagination
 );
 
+post_routes.get(
+  "/fetch-post",
+  generate_uuid_middleware(),
+  fetch_post_by_id
+);
 
 
 
