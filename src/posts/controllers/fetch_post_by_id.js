@@ -22,7 +22,7 @@ export const fetch_post_by_id = async (req, res) => {
             LEFT JOIN 
                 mst_tags t ON pt.tag_id = t.id
             WHERE 
-                p.id = 'dee91150-4882-11f0-ae94-e54865b51de2'
+                p.id = '${req.query.id}'
             GROUP BY 
                 p.id, p.title, p.description, p.type, p.external_url, p.media_url, p.post_date, p.created_at;
         `
