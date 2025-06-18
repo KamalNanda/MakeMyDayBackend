@@ -5,8 +5,7 @@ class MasterUser extends Model {}
 
 MasterUser.init({
         id: {
-            type: DataTypes.UUID,
-            defaultValue: Sequelize.UUIDV1,
+            type: DataTypes.STRING, 
             primaryKey: true
         },
         email: {
