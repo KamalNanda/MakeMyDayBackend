@@ -38,7 +38,9 @@ const options = {
     "./src/posts/controllers/fetch_all_posts.js",
     "./src/contact/controllers/fetch_messages.js",
     "./src/posts/controllers/fetch_all_posts_by_pagination.js",
-    "./src/users/controllers/upsert_user_controller.js"
+    "./src/users/controllers/upsert_user_controller.js",
+    "./src/posts/controllers/fetch_tag_list.js",
+    "./src/posts/controllers/fetch_posts_by_tag.js"
   ],
 };
 
