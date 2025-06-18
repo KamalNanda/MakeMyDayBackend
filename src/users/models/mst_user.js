@@ -16,10 +16,6 @@ MasterUser.init({
         username: {
             type: DataTypes.STRING,
             allowNull: true
-        },  
-        user_img: {
-            type: DataTypes.TEXT, 
-            allowNull: true
         }
     },
     {

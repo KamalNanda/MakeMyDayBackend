@@ -8,6 +8,7 @@ import specs from './utilities/swaggerSetup.js'
 import post_routes from './src/posts/routes/posts_route.js';
 import TnsPostVsTag from './src/posts/models/tns_post_vs_tag.js'; 
 import contact_routes from './src/contact/routes/contact_routes.js';
+import user_routes from './src/users/routes/user_routes.js';
 
 export const app = express() 
 
@@ -24,6 +25,7 @@ app.use((req,res,next)=>{
 })
 app.use("/mmd/v1/posts", post_routes);
 app.use("/mmd/v1/messages", contact_routes);
+app.use("mmd/v1/users", user_routes)
 
 let port = process.env.PORT || 3000
 

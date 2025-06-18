@@ -23,6 +23,10 @@ const options = {
         description: "API for Posts",
       },
       {
+        name: "User",
+        description: "API for Users",
+      },
+      {
         name: "Messages",
         description: "API for Contact Me",
       },
@@ -33,7 +37,8 @@ const options = {
     "./src/posts/controllers/add_post.js",
     "./src/posts/controllers/fetch_all_posts.js",
     "./src/contact/controllers/fetch_messages.js",
-    "./src/posts/controllers/fetch_all_posts_by_pagination.js"
+    "./src/posts/controllers/fetch_all_posts_by_pagination.js",
+    "./src/users/controllers/upsert_user_controller.js"
   ],
 };
 
