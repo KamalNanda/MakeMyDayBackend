@@ -25,7 +25,7 @@ app.use((req,res,next)=>{
 })
 app.use("/mmd/v1/posts", post_routes);
 app.use("/mmd/v1/messages", contact_routes);
-app.use("mmd/v1/users", user_routes)
+app.use("/mmd/v1/users", user_routes)
 
 let port = process.env.PORT || 3000
 

@@ -35,7 +35,7 @@ export const upsert_user_controller = async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /mmd/v1/users/upsert-usert:
+ *  /mmd/v1/users/upsert-user:
  *    summary: API to upsert a user
  *    description: API to upsert a user
  *    post:
