@@ -6,7 +6,8 @@ import swaggerUi from "swagger-ui-express";
 import { Logger } from './utilities/logger.js'
 import specs from './utilities/swaggerSetup.js'
 import post_routes from './src/posts/routes/posts_route.js';
-import TnsPostVsTag from './src/posts/models/tns_post_vs_tag.js'; 
+import TnsPostVsTag from './src/posts/models/tns_post_vs_tag.js';  
+import TnsPostVsUser from './src/posts/models/tns_post_vs_users.js';
 import contact_routes from './src/contact/routes/contact_routes.js';
 import user_routes from './src/users/routes/user_routes.js';
 

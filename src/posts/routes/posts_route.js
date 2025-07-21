@@ -6,6 +6,8 @@ import { fetch_all_posts_by_pagination } from "../controllers/fetch_all_posts_by
 import { fetch_post_by_id } from "../controllers/fetch_post_by_id.js";
 import { fetch_tag_list } from "../controllers/fetch_tag_list.js";
 import { fetch_posts_by_tag } from "../controllers/fetch_posts_by_tag.js";
+import { like_post_controller } from "../controllers/like_post.js";
+import { fetch_liked_posts } from "../controllers/fetch_liked_posts.js";
 
 const post_routes = express.Router();
 
@@ -43,5 +45,18 @@ post_routes.get(
   generate_uuid_middleware(),
   fetch_posts_by_tag
 )
+
+post_routes.get(
+  "/fetch-liked-posts",
+  generate_uuid_middleware(),
+  fetch_liked_posts
+);
+
+post_routes.post(
+  "/like-post",
+  generate_uuid_middleware(),
+  like_post_controller
+);
+
 
 export default post_routes;

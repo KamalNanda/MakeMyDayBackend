@@ -40,7 +40,9 @@ const options = {
     "./src/posts/controllers/fetch_all_posts_by_pagination.js",
     "./src/users/controllers/upsert_user_controller.js",
     "./src/posts/controllers/fetch_tag_list.js",
-    "./src/posts/controllers/fetch_posts_by_tag.js"
+    "./src/posts/controllers/fetch_posts_by_tag.js",
+    "./src/posts/controllers/like_post.js",
+    "./src/posts/controllers/fetch_liked_posts.js"
   ],
 };
 
