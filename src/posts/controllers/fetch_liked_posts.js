@@ -35,9 +35,45 @@ import { Logger } from "../../../utilities/logger.js";
  *                    data:
  *                      type: array
  *                      description: Array of liked posts
+ *                      items:
+ *                        type: object
+ *                        properties:
+ *                          id:
+ *                            type: string
+ *                          title:
+ *                            type: string
+ *                          description:
+ *                            type: string
+ *                          type:
+ *                            type: string
+ *                          external_url:
+ *                            type: string
+ *                          media_url:
+ *                            type: string
+ *                          post_date:
+ *                            type: string
+ *                          tags:
+ *                            type: array
+ *                            items:
+ *                              type: string
+ *                          created_at:
+ *                            type: string
+ *                          like_count:
+ *                            type: integer
+ *                            description: Number of likes on the post
  *                  example:
  *                    status: true
- *                    data: []
+ *                    data:
+ *                      - id: "post-uuid"
+ *                        title: "Post Title"
+ *                        description: "Post description"
+ *                        type: "video"
+ *                        external_url: "url"
+ *                        media_url: "media-url"
+ *                        post_date: "2024-06-01"
+ *                        tags: ["funny", "meme"]
+ *                        created_at: "2024-06-01T12:00:00Z"
+ *                        like_count: 5
  *        '400':
  *          description: Bad Request
  *          content:
@@ -78,7 +114,8 @@ export const fetch_liked_posts = async (req, res) => {
                 p.media_url, 
                 p.post_date,
                 array_agg(t.tag ORDER BY t.tag) FILTER (WHERE t.tag IS NOT NULL) AS tags,
-                p.created_at
+                p.created_at,
+                (SELECT COUNT(*) FROM tns_post_vs_user pu2 WHERE pu2.post_id = p.id) AS like_count
             FROM 
                 mst_posts p
             JOIN 
