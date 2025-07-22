@@ -4,6 +4,7 @@ import { Logger } from "../../../utilities/logger.js"
 export const fetch_posts_by_tag = async (req, res) => {
     const reqId = res.locals.uuid
     const tag_id = req.query.tag_id
+    const user_id = req.query.user_id;
     try {
         const _query = `
            SELECT 
@@ -36,7 +37,17 @@ export const fetch_posts_by_tag = async (req, res) => {
             .then(([results, metadata]) => {
                 _posts = results;
             });
-
+        // Add liked_by_you
+        if (user_id) {
+            const likeQuery = `SELECT post_id FROM tns_post_vs_user WHERE user_id = :user_id`;
+            let likedPostIds = [];
+            await db.query(likeQuery, { replacements: { user_id } }).then(([results]) => {
+                likedPostIds = results.map(r => r.post_id);
+            });
+            _posts = _posts.map(post => ({ ...post, liked_by_you: likedPostIds.includes(post.id) }));
+        } else {
+            _posts = _posts.map(post => ({ ...post, liked_by_you: false }));
+        }
         return res.status(200).json({
             status: true,
             data: _posts
@@ -70,6 +81,11 @@ export const fetch_posts_by_tag = async (req, res) => {
  *           example: 'de3f25a0-f594-11ef-a6ae-a1ce8caff7b1'
  *           schema:
  *             type: string  
+ *         - name: user_id
+ *           in: query
+ *           required: false
+ *           schema:
+ *             type: string
  *      responses:
  *        '200':
  *          description: OK
@@ -111,6 +127,9 @@ export const fetch_posts_by_tag = async (req, res) => {
  *                          like_count:
  *                            type: integer
  *                            description: Number of likes on the post
+ *                          liked_by_you:
+ *                            type: boolean
+ *                            description: Whether the post is liked by the user (if user_id is provided)
  *                  example:
  *                    status: true
  *                    data:
@@ -124,6 +143,7 @@ export const fetch_posts_by_tag = async (req, res) => {
  *                        tags: ["funny", "meme"]
  *                        created_at: "2024-06-01T12:00:00Z"
  *                        like_count: 5
+ *                        liked_by_you: true
  *        '500':
  *          description: Internal Server Error
  *          content:

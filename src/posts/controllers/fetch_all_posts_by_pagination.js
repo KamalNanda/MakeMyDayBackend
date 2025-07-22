@@ -3,7 +3,7 @@ import { Logger } from "../../../utilities/logger.js";
 
 export const fetch_all_posts_by_pagination = async (req, res) => {
     const reqId = res.locals.uuid;
-    
+    const user_id = req.query.user_id;
     // Extract page and limit from query parameters, set defaults
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -42,6 +42,18 @@ export const fetch_all_posts_by_pagination = async (req, res) => {
         await db.query(_query, { replacements: { limit, offset } }).then(([results]) => {
             _posts = results;
         });
+
+        // Add liked_by_you
+        if (user_id) {
+            const likeQuery = `SELECT post_id FROM tns_post_vs_user WHERE user_id = :user_id`;
+            let likedPostIds = [];
+            await db.query(likeQuery, { replacements: { user_id } }).then(([results]) => {
+                likedPostIds = results.map(r => r.post_id);
+            });
+            _posts = _posts.map(post => ({ ...post, liked_by_you: likedPostIds.includes(post.id) }));
+        } else {
+            _posts = _posts.map(post => ({ ...post, liked_by_you: false }));
+        }
 
         await db.query(countQuery).then(([results]) => {
             totalCount = results[0].total;
@@ -93,6 +105,11 @@ export const fetch_all_posts_by_pagination = async (req, res) => {
  *           example: 5
  *           schema:
  *             type: integer  
+ *         - name: user_id
+ *           in: query
+ *           required: false
+ *           schema:
+ *             type: string
  *      responses:
  *        '200':
  *          description: OK
@@ -134,6 +151,9 @@ export const fetch_all_posts_by_pagination = async (req, res) => {
  *                          like_count:
  *                            type: integer
  *                            description: Number of likes on the post
+ *                          liked_by_you:
+ *                            type: boolean
+ *                            description: Whether the post is liked by the user (if user_id is provided)
  *                  example:
  *                    status: true
  *                    data:
@@ -147,6 +167,7 @@ export const fetch_all_posts_by_pagination = async (req, res) => {
  *                        tags: ["funny", "meme"]
  *                        created_at: "2024-06-01T12:00:00Z"
  *                        like_count: 5
+ *                        liked_by_you: true
  *        '500':
  *          description: Internal Server Error
  *          content:

@@ -3,6 +3,7 @@ import { Logger } from "../../../utilities/logger.js"
 
 export const fetch_post_by_id = async (req, res) => {
     const reqId = res.locals.uuid
+    const user_id = req.query.user_id;
     try {
         const _query = `
            SELECT 
@@ -33,10 +34,22 @@ export const fetch_post_by_id = async (req, res) => {
             .then(([results, metadata]) => {
                 _posts = results;
             });
-
+        let post = _posts[0];
+        if (post) {
+            if (user_id) {
+                const likeQuery = `SELECT 1 FROM tns_post_vs_user WHERE user_id = :user_id AND post_id = :post_id LIMIT 1`;
+                let liked = false;
+                await db.query(likeQuery, { replacements: { user_id, post_id: post.id } }).then(([results]) => {
+                    liked = results.length > 0;
+                });
+                post.liked_by_you = liked;
+            } else {
+                post.liked_by_you = false;
+            }
+        }
         return res.status(200).json({
             status: true,
-            data: _posts[0]
+            data: post
         })
     } catch (error) {
         Logger(reqId).error(`Error in fetch_post_by_id - ${error.message}`)
@@ -64,6 +77,11 @@ export const fetch_post_by_id = async (req, res) => {
  *         - name: id
  *           in: query
  *           required: true
+ *           schema:
+ *             type: string
+ *         - name: user_id
+ *           in: query
+ *           required: false
  *           schema:
  *             type: string
  *      responses:
@@ -105,6 +123,9 @@ export const fetch_post_by_id = async (req, res) => {
  *                        like_count:
  *                          type: integer
  *                          description: Number of likes on the post
+ *                        liked_by_you:
+ *                          type: boolean
+ *                          description: Whether the post is liked by the user (if user_id is provided)
  *                  example:
  *                    status: true
  *                    data:
@@ -118,6 +139,7 @@ export const fetch_post_by_id = async (req, res) => {
  *                      tags: ["funny", "meme"]
  *                      created_at: "2024-06-01T12:00:00Z"
  *                      like_count: 5
+ *                      liked_by_you: true
  *        '500':
  *          description: Internal Server Error
  *          content:
