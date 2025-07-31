@@ -8,7 +8,7 @@ import { fetch_tag_list } from "../controllers/fetch_tag_list.js";
 import { fetch_posts_by_tag } from "../controllers/fetch_posts_by_tag.js";
 import { like_post_controller } from "../controllers/like_post.js";
 import { fetch_liked_posts } from "../controllers/fetch_liked_posts.js";
-import { testNotification } from "../controllers/test_notification.js";
+import { testNotification, checkRegisteredTokens } from "../controllers/test_notification.js";
 
 const post_routes = express.Router();
 
@@ -63,6 +63,12 @@ post_routes.post(
   "/test-notification",
   generate_uuid_middleware(),
   testNotification
+);
+
+post_routes.get(
+  "/check-registered-tokens",
+  generate_uuid_middleware(),
+  checkRegisteredTokens
 );
 
 export default post_routes;

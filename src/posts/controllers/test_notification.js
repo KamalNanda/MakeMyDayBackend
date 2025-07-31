@@ -1,5 +1,7 @@
 import { Logger } from "../../../utilities/logger.js";
 import FirebaseService from "../../../utilities/firebase_service.js";
+import MasterUser from "../../users/models/mst_user.js";
+import { Op } from "sequelize";
 
 export const testNotification = async (req, res) => {
     const reqId = Math.random().toString(36).substring(7);
@@ -49,6 +51,50 @@ export const testNotification = async (req, res) => {
         return res.status(500).json({
             status: false,
             message: 'Error testing notification',
+            error: error.message
+        });
+    }
+};
+
+export const checkRegisteredTokens = async (req, res) => {
+    const reqId = Math.random().toString(36).substring(7);
+    
+    try {
+        Logger(reqId).info('Checking registered FCM tokens...');
+        
+        // Get all users with FCM tokens
+        const users = await MasterUser.findAll({
+            where: {
+                fcm_token: {
+                    [Op.ne]: null
+                }
+            },
+            attributes: ['id', 'email', 'fcm_token', 'notification_preferences', 'is_active']
+        });
+
+        Logger(reqId).info(`Found ${users.length} users with FCM tokens`);
+
+        const tokenInfo = users.map(user => ({
+            id: user.id,
+            email: user.email,
+            fcm_token_preview: user.fcm_token ? `${user.fcm_token.substring(0, 20)}...` : null,
+            notification_preferences: user.notification_preferences,
+            is_active: user.is_active
+        }));
+
+        return res.status(200).json({
+            status: true,
+            message: `Found ${users.length} registered users`,
+            data: {
+                total_users: users.length,
+                users: tokenInfo
+            }
+        });
+    } catch (error) {
+        Logger(reqId).error(`Error checking registered tokens: ${error.message}`);
+        return res.status(500).json({
+            status: false,
+            message: 'Error checking registered tokens',
             error: error.message
         });
     }

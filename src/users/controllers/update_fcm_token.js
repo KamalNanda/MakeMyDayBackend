@@ -1,5 +1,5 @@
 import { Logger } from "../../../utilities/logger.js";
-import User from "../models/user.js";
+import MasterUser from "../models/mst_user.js";
 
 export const updateFcmToken = async (req, res) => {
   const reqId = res.locals.uuid;
@@ -16,16 +16,16 @@ export const updateFcmToken = async (req, res) => {
     }
 
     // Find or create user
-    let user = await User.findOne({
-      where: { firebase_uid: user_id }
+    let user = await MasterUser.findOne({
+      where: { id: user_id }
     });
 
     if (!user) {
       // Create new user if doesn't exist
-      user = await User.create({
-        firebase_uid: user_id,
+      user = await MasterUser.create({
+        id: user_id,
         email: req.body.email || 'unknown@example.com',
-        display_name: req.body.display_name || 'User',
+        username: req.body.display_name || 'User',
         fcm_token: fcm_token,
       });
       Logger(reqId).info(`Created new user with FCM token: ${user_id}`);
@@ -43,7 +43,7 @@ export const updateFcmToken = async (req, res) => {
       message: 'FCM token updated successfully',
       data: {
         user_id: user.id,
-        firebase_uid: user.firebase_uid,
+        email: user.email,
       }
     });
 

@@ -13,13 +13,41 @@ export const upsert_user_controller = async (req, res) => {
             }
         })
         if(!user_existance_instance) {
-            await MasterUser.create(payload)
-            operation = 'created'
+            // Create new user with FCM token and notification preferences
+            const userData = {
+                ...payload,
+                fcm_token: payload.fcm_token || null,
+                notification_preferences: payload.notification_preferences || {
+                    new_posts: true,
+                    likes: true,
+                    comments: true,
+                    general: true
+                },
+                is_active: true,
+                last_login: new Date()
+            };
+            await MasterUser.create(userData);
+            operation = 'created';
+            Logger(reqId).info(`Created new user with FCM token: ${payload.id}`);
         } else {
+            // Update existing user, including FCM token if provided
             user_existance_instance.username = payload.username;
-            user_existance_instance.email = payload.email; 
+            user_existance_instance.email = payload.email;
+            
+            // Update FCM token if provided
+            if (payload.fcm_token) {
+                user_existance_instance.fcm_token = payload.fcm_token;
+                Logger(reqId).info(`Updated FCM token for user: ${payload.id}`);
+            }
+            
+            // Update notification preferences if provided
+            if (payload.notification_preferences) {
+                user_existance_instance.notification_preferences = payload.notification_preferences;
+            }
+            
+            user_existance_instance.last_login = new Date();
             await user_existance_instance.save();
-            operation = 'updated'
+            operation = 'updated';
         }
         return res.status(200).json({status: true, message: `User ${operation} successfully`})
     } catch(error){

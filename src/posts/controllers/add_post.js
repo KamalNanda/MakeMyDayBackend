@@ -1,6 +1,6 @@
 import { Logger } from "../../../utilities/logger.js"
 import MasterPost from "../models/mst_post.js";
-import User from "../../users/models/user.js";
+import MasterUser from "../../users/models/mst_user.js";
 import { check_tag_existence_and_insert } from "../utilities/check_tag_existence_and_insert.js";
 import { create_instances_in_tns_post_vs_tag_table } from "../utilities/create_instances_in_tns_post_vs_tag_table.js";
 import FirebaseService from "../../../utilities/firebase_service.js";
@@ -52,8 +52,10 @@ export const add_post = async (req, res) => {
 
         // Send push notification to all users
         try {
+            Logger(reqId).info('Starting notification process...');
+            
             // Get all active users with FCM tokens
-            const users = await User.findAll({
+            const users = await MasterUser.findAll({
                 where: {
                     is_active: true,
                     fcm_token: {
@@ -63,14 +65,21 @@ export const add_post = async (req, res) => {
                 attributes: ['fcm_token', 'notification_preferences']
             });
 
+            Logger(reqId).info(`Found ${users.length} users with FCM tokens`);
+
             // Filter users who have enabled new post notifications
             const usersToNotify = users.filter(user => {
                 const preferences = user.notification_preferences || {};
-                return preferences.new_posts !== false; // Default to true if not set
+                const shouldNotify = preferences.new_posts !== false; // Default to true if not set
+                Logger(reqId).info(`User ${user.fcm_token?.substring(0, 10)}... has new_posts preference: ${preferences.new_posts}, should notify: ${shouldNotify}`);
+                return shouldNotify;
             });
+
+            Logger(reqId).info(`Filtered to ${usersToNotify.length} users who should receive notifications`);
 
             if (usersToNotify.length > 0) {
                 const fcmTokens = usersToNotify.map(user => user.fcm_token).filter(token => token);
+                Logger(reqId).info(`Preparing to send notifications to ${fcmTokens.length} devices`);
                 
                 if (fcmTokens.length > 0) {
                     // Send notification
@@ -90,10 +99,15 @@ export const add_post = async (req, res) => {
                     } else {
                         Logger(reqId).warn(`Failed to send push notification: ${notificationResult.error}`);
                     }
+                } else {
+                    Logger(reqId).warn('No valid FCM tokens found to send notifications');
                 }
+            } else {
+                Logger(reqId).info('No users found to notify or all users have disabled new post notifications');
             }
         } catch (notificationError) {
             Logger(reqId).error(`Error sending push notification: ${notificationError.message}`);
+            Logger(reqId).error(`Notification error stack: ${notificationError.stack}`);
             // Don't fail the post creation if notification fails
         }
 
