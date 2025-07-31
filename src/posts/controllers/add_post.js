@@ -1,7 +1,10 @@
 import { Logger } from "../../../utilities/logger.js"
 import MasterPost from "../models/mst_post.js";
+import User from "../../users/models/user.js";
 import { check_tag_existence_and_insert } from "../utilities/check_tag_existence_and_insert.js";
 import { create_instances_in_tns_post_vs_tag_table } from "../utilities/create_instances_in_tns_post_vs_tag_table.js";
+import FirebaseService from "../../../utilities/firebase_service.js";
+import { Op } from "sequelize";
 
 export const add_post = async (req, res) => {
     const reqId = res.locals.uuid
@@ -46,6 +49,54 @@ export const add_post = async (req, res) => {
                 message: 'Something went wrong in mapping post with tags!'
             })
         } 
+
+        // Send push notification to all users
+        try {
+            // Get all active users with FCM tokens
+            const users = await User.findAll({
+                where: {
+                    is_active: true,
+                    fcm_token: {
+                        [Op.ne]: null
+                    }
+                },
+                attributes: ['fcm_token', 'notification_preferences']
+            });
+
+            // Filter users who have enabled new post notifications
+            const usersToNotify = users.filter(user => {
+                const preferences = user.notification_preferences || {};
+                return preferences.new_posts !== false; // Default to true if not set
+            });
+
+            if (usersToNotify.length > 0) {
+                const fcmTokens = usersToNotify.map(user => user.fcm_token).filter(token => token);
+                
+                if (fcmTokens.length > 0) {
+                    // Send notification
+                    const notificationResult = await FirebaseService.sendNewPostNotification(
+                        {
+                            id: post.id,
+                            title: post.title,
+                            description: post.description,
+                            media_url: post.media_url,
+                            external_url: post.external_url,
+                        },
+                        fcmTokens
+                    );
+
+                    if (notificationResult.success) {
+                        Logger(reqId).info(`Push notification sent successfully to ${notificationResult.successCount || 1} users`);
+                    } else {
+                        Logger(reqId).warn(`Failed to send push notification: ${notificationResult.error}`);
+                    }
+                }
+            }
+        } catch (notificationError) {
+            Logger(reqId).error(`Error sending push notification: ${notificationError.message}`);
+            // Don't fail the post creation if notification fails
+        }
+
         Logger(reqId).info(`Post created`);
         return res.status(200).json({
             status: true,

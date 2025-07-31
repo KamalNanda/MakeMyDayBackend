@@ -1,13 +1,16 @@
-import express from "express";
-import { generate_uuid_middleware } from "../../../utilities/middlewares/generate_uuid_middleware.js"; 
-import { upsert_user_controller } from "../controllers/upsert_user_controller.js";
+import express from 'express';
+import { updateFcmToken } from '../controllers/update_fcm_token.js';
+import { getNotificationPreferences, updateNotificationPreferences } from '../controllers/notification_preferences.js';
 
-const user_routes = express.Router();
+const router = express.Router();
 
-user_routes.post(
-  "/upsert-user",
-  generate_uuid_middleware(),
-  upsert_user_controller
-);
+// Update FCM token route
+router.post('/update-fcm-token', updateFcmToken);
 
-export default user_routes;
+// Get notification preferences
+router.get('/notification-preferences', getNotificationPreferences);
+
+// Update notification preferences
+router.post('/update-notification-preferences', updateNotificationPreferences);
+
+export default router;
