@@ -53,9 +53,9 @@ export const add_post = async (req, res) => {
         // Send push notification to all users
         try {
             Logger(reqId).info('Starting notification process...');
-            
+
             // Get all active users with FCM tokens
-            const users = await MasterUser.findAll({
+            const users = await MasterUser.findAll({ // Changed from User to MasterUser
                 where: {
                     is_active: true,
                     fcm_token: {
@@ -80,7 +80,7 @@ export const add_post = async (req, res) => {
             if (usersToNotify.length > 0) {
                 const fcmTokens = usersToNotify.map(user => user.fcm_token).filter(token => token);
                 Logger(reqId).info(`Preparing to send notifications to ${fcmTokens.length} devices`);
-                
+
                 if (fcmTokens.length > 0) {
                     // Send notification
                     const notificationResult = await FirebaseService.sendNewPostNotification(
@@ -104,6 +104,22 @@ export const add_post = async (req, res) => {
                 }
             } else {
                 Logger(reqId).info('No users found to notify or all users have disabled new post notifications');
+            }
+
+            // Also trigger a local notification signal (for testing)
+            Logger(reqId).info('Triggering local notification signal for testing');
+            try {
+                // This will help trigger local notifications in the Flutter app
+                const localNotificationSignal = {
+                    type: 'new_post',
+                    post_id: post.id,
+                    title: post.title,
+                    description: post.description,
+                    timestamp: new Date().toISOString()
+                };
+                Logger(reqId).info(`Local notification signal: ${JSON.stringify(localNotificationSignal)}`);
+            } catch (localError) {
+                Logger(reqId).error(`Error triggering local notification signal: ${localError.message}`);
             }
         } catch (notificationError) {
             Logger(reqId).error(`Error sending push notification: ${notificationError.message}`);

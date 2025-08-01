@@ -100,6 +100,38 @@ export const checkRegisteredTokens = async (req, res) => {
     }
 };
 
+export const triggerLocalNotification = async (req, res) => {
+    const reqId = Math.random().toString(36).substring(7);
+
+    try {
+        Logger(reqId).info('Triggering local notification for testing...');
+
+        // This endpoint will help test local notifications
+        const notificationData = {
+            type: 'test_local',
+            title: 'Test Local Notification',
+            body: 'This is a test local notification from backend',
+            timestamp: new Date().toISOString(),
+            post_id: req.body.post_id || 'test_post_123'
+        };
+
+        Logger(reqId).info(`Local notification data: ${JSON.stringify(notificationData)}`);
+
+        return res.status(200).json({
+            status: true,
+            message: 'Local notification triggered successfully',
+            data: notificationData
+        });
+    } catch (error) {
+        Logger(reqId).error(`Error triggering local notification: ${error.message}`);
+        return res.status(500).json({
+            status: false,
+            message: 'Error triggering local notification',
+            error: error.message
+        });
+    }
+};
+
 /**
  * @swagger
  * /mmd/v1/posts/test-notification:

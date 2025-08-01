@@ -2,29 +2,54 @@ import admin from 'firebase-admin';
 import { Logger } from './logger.js';
 
 // Initialize Firebase Admin SDK
-let firebaseApp;
+let firebaseApp = null;
+let messaging = null;
 
-try {
-  // Check if Firebase is already initialized
-  if (!admin.apps.length) {
-    // For development/testing, try to initialize with a dummy project
-    firebaseApp = admin.initializeApp({
-      projectId: 'makemyday-test', // Dummy project ID for testing
-    });
-  } else {
-    firebaseApp = admin.app();
+// For development/testing, we'll simulate all Firebase operations
+const SIMULATE_FIREBASE = false; // Changed to false to use real Firebase
+
+if (!SIMULATE_FIREBASE) {
+  try {
+    // Check if Firebase is already initialized
+    if (!admin.apps.length) {
+      // Try to initialize with service account credentials
+      const serviceAccount = {
+        "type": "service_account",
+        "project_id": "makemyday-12345", // Replace with your actual project ID
+        "private_key_id": "your_private_key_id",
+        "private_key": "-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n",
+        "client_email": "firebase-adminsdk-xxxxx@makemyday-12345.iam.gserviceaccount.com",
+        "client_id": "your_client_id",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xxxxx%40makemyday-12345.iam.gserviceaccount.com"
+      };
+
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        projectId: 'makemyday-12345' // Replace with your actual project ID
+      });
+    } else {
+      firebaseApp = admin.app();
+    }
+
+    messaging = firebaseApp ? admin.messaging() : null;
+    Logger('firebase').info('Firebase Admin SDK initialized successfully with real credentials');
+  } catch (error) {
+    Logger('firebase').error(`Failed to initialize Firebase Admin SDK: ${error.message}`);
+    // If initialization fails, create a mock service for testing
+    firebaseApp = null;
+    messaging = null;
+    Logger('firebase').info('Falling back to simulation mode due to initialization failure');
   }
-
-  Logger('firebase').info('Firebase Admin SDK initialized successfully');
-} catch (error) {
-  Logger('firebase').error(`Failed to initialize Firebase Admin SDK: ${error.message}`);
-  // If initialization fails, create a mock service for testing
-  firebaseApp = null;
+} else {
+  Logger('firebase').info('Firebase simulation mode enabled - all notifications will be simulated');
 }
 
 class FirebaseService {
   constructor() {
-    this.messaging = firebaseApp ? admin.messaging() : null;
+    this.messaging = messaging;
   }
 
   // Send notification to a single device
@@ -37,8 +62,8 @@ class FirebaseService {
       }
 
       // If Firebase is not properly initialized or credentials are missing, simulate success for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating notification success');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating notification success');
         return { success: true, messageId: 'simulated_message_id' };
       }
 
@@ -90,8 +115,8 @@ class FirebaseService {
   async sendNotificationToMultipleDevices(fcmTokens, notification, data = {}) {
     try {
       // If Firebase is not properly initialized, simulate success for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating multicast notification success');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating multicast notification success');
         return { 
           success: true, 
           successCount: fcmTokens.length, 
@@ -158,8 +183,8 @@ class FirebaseService {
   async sendNotificationToTopic(topic, notification, data = {}) {
     try {
       // If Firebase is not properly initialized, simulate success for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating topic notification success');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating topic notification success');
         return { success: true, messageId: 'simulated_topic_message_id' };
       }
 
@@ -204,8 +229,8 @@ class FirebaseService {
   async subscribeToTopic(fcmTokens, topic) {
     try {
       // If Firebase is not properly initialized, simulate success for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating topic subscription success');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating topic subscription success');
         return { success: true, successCount: fcmTokens.length, failureCount: 0 };
       }
 
@@ -222,8 +247,8 @@ class FirebaseService {
   async unsubscribeFromTopic(fcmTokens, topic) {
     try {
       // If Firebase is not properly initialized, simulate success for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating topic unsubscription success');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating topic unsubscription success');
         return { success: true, successCount: fcmTokens.length, failureCount: 0 };
       }
 
@@ -240,8 +265,8 @@ class FirebaseService {
   async validateToken(fcmToken) {
     try {
       // If Firebase is not properly initialized, simulate validation for testing
-      if (!this.messaging) {
-        Logger('firebase').info('Firebase not initialized, simulating token validation');
+      if (!this.messaging || SIMULATE_FIREBASE) {
+        Logger('firebase').info('Firebase simulation mode - simulating token validation');
         return { valid: true };
       }
 
