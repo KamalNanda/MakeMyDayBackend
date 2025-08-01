@@ -2,7 +2,7 @@ import express from 'express';
 import { updateFcmToken } from '../controllers/update_fcm_token.js';
 import { getNotificationPreferences, updateNotificationPreferences } from '../controllers/notification_preferences.js';
 
-const router = express.Router();
+const router = express.Router()
 
 // Update FCM token route
 router.post('/update-fcm-token', updateFcmToken);
