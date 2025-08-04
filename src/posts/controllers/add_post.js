@@ -118,6 +118,19 @@ export const add_post = async (req, res) => {
                     timestamp: new Date().toISOString()
                 };
                 Logger(reqId).info(`Local notification signal: ${JSON.stringify(localNotificationSignal)}`);
+                
+                // Call the local notification endpoint to trigger notification on Flutter app
+                const axios = require('axios');
+                try {
+                    await axios.post('http://localhost:3000/mmd/v1/posts/trigger-local-notification', {
+                        post_id: post.id,
+                        title: post.title,
+                        description: post.description
+                    });
+                    Logger(reqId).info('Local notification endpoint called successfully');
+                } catch (localEndpointError) {
+                    Logger(reqId).error(`Error calling local notification endpoint: ${localEndpointError.message}`);
+                }
             } catch (localError) {
                 Logger(reqId).error(`Error triggering local notification signal: ${localError.message}`);
             }
@@ -130,7 +143,13 @@ export const add_post = async (req, res) => {
         Logger(reqId).info(`Post created`);
         return res.status(200).json({
             status: true,
-            message: 'Post added'
+            message: 'Post added',
+            data: {
+                post_id: post.id,
+                title: post.title,
+                description: post.description,
+                notification_triggered: true
+            }
         })
     } catch(error){
         Logger(reqId).error(`Error in add_post - ${error.message}`)

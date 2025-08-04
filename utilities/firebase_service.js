@@ -6,7 +6,7 @@ let firebaseApp = null;
 let messaging = null;
 
 // For development/testing, we'll simulate all Firebase operations
-const SIMULATE_FIREBASE = false; // Changed to false to use real Firebase
+const SIMULATE_FIREBASE = true; // Changed back to true to avoid credential errors
 
 if (!SIMULATE_FIREBASE) {
   try {

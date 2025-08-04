@@ -29,7 +29,8 @@ export const fetch_posts_by_tag = async (req, res) => {
             GROUP BY 
                 p.id
             ORDER BY 
-                p.created_at DESC;  
+                p.created_at DESC
+            LIMIT 100;  
         `
         let _posts
         await db
@@ -67,12 +68,12 @@ export const fetch_posts_by_tag = async (req, res) => {
  * paths:
  *  /mmd/v1/posts/fetch-posts-by-tag:
  *    summary: API to fetch all posts by tag
- *    description: API to fetch all posts by tag
+ *    description: API to fetch all posts by tag (limited to 100 items)
  *    get:
  *      tags:
  *        - Posts
  *      summary: API to fetch all posts by tag
- *      description: API to fetch all posts by tag
+ *      description: API to fetch all posts by tag (limited to 100 items for performance)
  *      operationId: fetchPostsByTag
  *      parameters:
  *         - name: tag_id
@@ -100,7 +101,7 @@ export const fetch_posts_by_tag = async (req, res) => {
  *                      description: Status
  *                    data:
  *                      type: array
- *                      description: Array of posts
+ *                      description: Array of posts (limited to 100 items)
  *                      items:
  *                        type: object
  *                        properties:
