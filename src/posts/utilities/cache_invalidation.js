@@ -45,6 +45,8 @@ export class PostsCacheInvalidation {
         Logger(reqId).info(`Invalidating posts cache due to like action on post: ${postId} by user: ${userId}`);
         // Invalidate all cache since like counts affect all users
         postsCache.invalidateAll();
+        // Also invalidate user-specific liked posts cache
+        postsCache.invalidateUserCache(userId);
     }
 
     /**
