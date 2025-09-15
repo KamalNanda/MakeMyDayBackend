@@ -22,7 +22,7 @@ export const fetch_all_posts = async (req, res) => {
         }
 
         // Optimized query with single JOIN for user likes and pagination
-        const _query = `
+        const _query = user_id ? `
            SELECT 
                 p.id, 
                 p.title, 
@@ -57,6 +57,36 @@ export const fetch_all_posts = async (req, res) => {
             ORDER BY 
                 p.created_at DESC
             LIMIT :limit OFFSET :offset;
+        ` : `
+           SELECT 
+                p.id, 
+                p.title, 
+                p.description, 
+                p.type,
+                p.external_url,
+                p.media_url, 
+                p.post_date,
+                array_agg(DISTINCT t.tag ORDER BY t.tag) FILTER (WHERE t.tag IS NOT NULL) AS tags,
+                p.created_at,
+                COALESCE(like_counts.like_count, 0) AS like_count,
+                false AS liked_by_you
+            FROM 
+                mst_posts p
+            LEFT JOIN 
+                tns_post_vs_tag pt ON p.id = pt.post_id
+            LEFT JOIN 
+                mst_tags t ON pt.tag_id = t.id
+            LEFT JOIN (
+                SELECT post_id, COUNT(*) as like_count 
+                FROM tns_post_vs_user 
+                GROUP BY post_id
+            ) like_counts ON p.id = like_counts.post_id
+            GROUP BY 
+                p.id, p.title, p.description, p.type, p.external_url, p.media_url, p.post_date, p.created_at, 
+                like_counts.like_count
+            ORDER BY 
+                p.created_at DESC
+            LIMIT :limit OFFSET :offset;
         `;
 
         // Get total count for pagination metadata
@@ -65,8 +95,12 @@ export const fetch_all_posts = async (req, res) => {
         let _posts, totalCount;
         
         // Execute both queries in parallel for better performance
+        const queryReplacements = user_id 
+            ? { replacements: { user_id, limit, offset } }
+            : { replacements: { limit, offset } };
+            
         const [postsResult, countResult] = await Promise.all([
-            db.query(_query, { replacements: { user_id, limit, offset } }),
+            db.query(_query, queryReplacements),
             db.query(countQuery)
         ]);
 
