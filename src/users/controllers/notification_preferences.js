@@ -1,5 +1,5 @@
 import { Logger } from "../../../utilities/logger.js";
-import User from "../models/user.js";
+import MasterUser from "../models/mst_user.js";
 
 export const getNotificationPreferences = async (req, res) => {
   const reqId = res.locals.uuid;
@@ -15,8 +15,8 @@ export const getNotificationPreferences = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
-      where: { firebase_uid: user_id }
+    const user = await MasterUser.findOne({
+      where: { id: user_id }
     });
 
     if (!user) {
@@ -62,8 +62,8 @@ export const updateNotificationPreferences = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
-      where: { firebase_uid: user_id }
+    const user = await MasterUser.findOne({
+      where: { id: user_id }
     });
 
     if (!user) {

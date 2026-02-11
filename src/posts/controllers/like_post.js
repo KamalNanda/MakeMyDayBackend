@@ -1,6 +1,7 @@
 import { Logger } from "../../../utilities/logger.js"
 import MasterPost from "../models/mst_post.js"
 import TnsPostVsUser from "../models/tns_post_vs_users.js"
+import MasterUser from "../../users/models/mst_user.js"
 
 /**
  * @swagger
@@ -85,6 +86,12 @@ export const like_post_controller = async (req, res) => {
     const reqId = res.locals.uuid
     try {
         const { post_id, user_id } = req.body 
+        if (!post_id || !user_id) {
+            return res.status(400).json({
+                status: false,
+                message: "post_id and user_id are required"
+            })
+        }
 
         const post = await MasterPost.findOne({
             where: {
@@ -97,6 +104,12 @@ export const like_post_controller = async (req, res) => {
                 message: "Post not found"
             })
         }
+
+        // Ensure the user exists to avoid FK constraint failures on tns_post_vs_user.user_id -> mst_users.id
+        await MasterUser.findOrCreate({
+            where: { id: user_id },
+            defaults: { id: user_id }
+        })
 
         const post_vs_user = await TnsPostVsUser.findOne({
             where: {

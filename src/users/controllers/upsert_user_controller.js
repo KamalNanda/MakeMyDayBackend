@@ -7,15 +7,30 @@ export const upsert_user_controller = async (req, res) => {
     try{
         let operation = ''
         Logger(reqId).info(`Request recieved in upsert_user_controller with payload - ${JSON.stringify(payload)}`);
+        const id = payload?.id || payload?.user_id || payload?.firebase_uid;
+        const username =
+          payload?.username || payload?.display_name || payload?.displayName || null;
+        const email = payload?.email || null;
+
+        if (!id) {
+            return res.status(400).json({
+                status: false,
+                message: "id (or user_id/firebase_uid) is required"
+            })
+        }
+
         let user_existance_instance = await MasterUser.findOne({
             where: {
-                id: payload.id
+                id: id
             }
         })
         if(!user_existance_instance) {
             // Create new user with FCM token and notification preferences
             const userData = {
                 ...payload,
+                id,
+                username,
+                email,
                 fcm_token: payload.fcm_token || null,
                 notification_preferences: payload.notification_preferences || {
                     new_posts: true,
@@ -28,16 +43,16 @@ export const upsert_user_controller = async (req, res) => {
             };
             await MasterUser.create(userData);
             operation = 'created';
-            Logger(reqId).info(`Created new user with FCM token: ${payload.id}`);
+            Logger(reqId).info(`Created new user: ${id}`);
         } else {
             // Update existing user, including FCM token if provided
-            user_existance_instance.username = payload.username;
-            user_existance_instance.email = payload.email;
+            user_existance_instance.username = username;
+            user_existance_instance.email = email;
             
             // Update FCM token if provided
             if (payload.fcm_token) {
                 user_existance_instance.fcm_token = payload.fcm_token;
-                Logger(reqId).info(`Updated FCM token for user: ${payload.id}`);
+                Logger(reqId).info(`Updated FCM token for user: ${id}`);
             }
             
             // Update notification preferences if provided
