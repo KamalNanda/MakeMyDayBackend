@@ -37,7 +37,7 @@ export const fetch_post_by_id = async (req, res) => {
                 array_agg(DISTINCT t.tag ORDER BY t.tag) FILTER (WHERE t.tag IS NOT NULL) AS tags,
                 p.created_at,
                 COALESCE(like_counts.like_count, 0) AS like_count,
-                CASE WHEN user_likes.post_id IS NOT NULL THEN true ELSE false END AS liked_by_you
+                user_likes.post_id IS NOT NULL AS liked_by_you
             FROM 
                 mst_posts p
             LEFT JOIN 
