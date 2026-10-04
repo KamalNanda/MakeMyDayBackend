@@ -106,7 +106,15 @@ export const saveFcmToken = async (req, res) => {
  *   post:
  *     summary: Save FCM token for user
  *     tags: [Users]
- *     description: Save or update FCM token for push notifications (called by Flutter app)
+ *     operationId: saveFcmToken
+ *     description: Save or update an FCM token. Identify the user with a Firebase bearer token or the user_id request field.
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: false
+ *         description: Optional Firebase ID token as a Bearer token; use user_id in the request body when omitted.
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -117,6 +125,9 @@ export const saveFcmToken = async (req, res) => {
  *               fcm_token:
  *                 type: string
  *                 description: Firebase Cloud Messaging token
+ *               user_id:
+ *                 type: string
+ *                 description: User identifier used when no valid Firebase bearer token is supplied
  *               platform:
  *                 type: string
  *                 enum: [android, ios]
@@ -128,6 +139,7 @@ export const saveFcmToken = async (req, res) => {
  *               - fcm_token
  *             example:
  *               fcm_token: "fZD0fH7Tz0K:APA91bEZX9w3..."
+ *               user_id: "firebase_uid_here"
  *               platform: "android"
  *               device_name: "Samsung Galaxy S21"
  *     responses:

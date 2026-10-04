@@ -12,3 +12,43 @@ export const add_message = async (req, res) => {
         return res.status(500).json({status:true})
     }
 }
+
+/**
+ * @swagger
+ * /mmd/v1/messages/add-message:
+ *   post:
+ *     operationId: addMessage
+ *     summary: Submit a contact message
+ *     tags: [Messages]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               message:
+ *                 type: string
+ *             example:
+ *               name: Jane Doe
+ *               email: jane@example.com
+ *               message: I would like to get in touch.
+ *     responses:
+ *       '200':
+ *         description: Message accepted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *       '500':
+ *         description: Failed to save the message
+ */

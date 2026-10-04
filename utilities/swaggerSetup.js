@@ -5,19 +5,15 @@ const options = {
   swaggerDefinition: {
     openapi: "3.0.3",
     info: {
-      title:
-        "API Documentation for MakeMyDay Application",
+      title: "MakeMyDay API",
       version: "1.0",
+      description: "API documentation for the MakeMyDay backend.",
       contact: {
         name: "Kamal Nanda",
         email: "kamalnanda20@gmail.com",
       },
     }, 
     tags: [ 
-      {
-        name: "Health Check",
-        description: "API to health check",
-      }, 
       {
         name: "Posts",
         description: "API for Posts",
@@ -32,18 +28,7 @@ const options = {
       },
     ],
   },
-  apis: [
-    "./server.js", 
-    "./src/posts/controllers/add_post.js",
-    "./src/posts/controllers/fetch_all_posts.js",
-    "./src/contact/controllers/fetch_messages.js",
-    "./src/posts/controllers/fetch_all_posts_by_pagination.js",
-    "./src/users/controllers/upsert_user_controller.js",
-    "./src/posts/controllers/fetch_tag_list.js",
-    "./src/posts/controllers/fetch_posts_by_tag.js",
-    "./src/posts/controllers/like_post.js",
-    "./src/posts/controllers/fetch_liked_posts.js"
-  ],
+  apis: ["./src/**/controllers/*.js", "./utilities/swaggerSetup.js"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -55,7 +40,7 @@ export default specs;
  *  components:
  *    schemas:
  *      StandardErrorResponse:
- *        description: Response if authorization failed
+ *        description: Standard API error response
  *        type: object
  *        properties:
  *          status:
@@ -66,24 +51,18 @@ export default specs;
  *            description: Message
  *      PostgrestPrimaryKeyViolatesErrorResponse:
  *        type: object
- *        description: Response if authorization failed
+ *        description: Database constraint error response
  *        properties:
  *          code:
  *            type: string
  *            description: error code
  *          detail:
- *            type: String
+ *            type: string
  *            description: detail
  *          hint:
- *            type: String
+ *            type: string
  *            description: hint
  *          message:
  *            type: string
  *            description: Message
- *    securitySchemes:
- *      DashboardToken:
- *        description: Use the token recieved after User Sign-in API
- *        type: http
- *        scheme: bearer
- *        bearerFormat: JWT
  */

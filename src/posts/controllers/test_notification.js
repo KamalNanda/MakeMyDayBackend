@@ -138,8 +138,10 @@ export const triggerLocalNotification = async (req, res) => {
  *   post:
  *     summary: Test notification system
  *     tags: [Posts]
+ *     operationId: testNotification
+ *     description: Sends a test push notification to the supplied FCM token, or a placeholder token when omitted.
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
@@ -149,8 +151,109 @@ export const triggerLocalNotification = async (req, res) => {
  *                 type: string
  *                 description: FCM token to send test notification to
  *     responses:
- *       200:
+ *       '200':
  *         description: Test notification sent successfully
- *       500:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 result:
+ *                   type: object
+ *       '500':
  *         description: Test notification failed
- */ 
+ */
+
+/**
+ * @swagger
+ * /mmd/v1/posts/check-registered-tokens:
+ *   get:
+ *     operationId: checkRegisteredTokens
+ *     summary: List users with registered notification tokens
+ *     tags: [Posts]
+ *     responses:
+ *       '200':
+ *         description: Registered users and masked FCM token previews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     total_users:
+ *                       type: integer
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           fcm_token_preview:
+ *                             type: string
+ *                           notification_preferences:
+ *                             type: object
+ *                           is_active:
+ *                             type: boolean
+ *       '500':
+ *         description: Failed to retrieve registered tokens
+ */
+
+/**
+ * @swagger
+ * /mmd/v1/posts/trigger-local-notification:
+ *   post:
+ *     operationId: triggerLocalNotification
+ *     summary: Create local notification test data
+ *     description: Returns a test notification payload for a client to display locally; it does not send a push notification.
+ *     tags: [Posts]
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               post_id:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Local notification payload created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     type:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     body:
+ *                       type: string
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                     post_id:
+ *                       type: string
+ *       '500':
+ *         description: Failed to create local notification payload
+ */

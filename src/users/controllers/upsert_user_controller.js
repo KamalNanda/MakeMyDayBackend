@@ -95,18 +95,34 @@ export const upsert_user_controller = async (req, res) => {
  *          application/json:
  *            schema:
  *              type: object
- *              description: Add user details
+ *              description: Create or update a user. Supply at least one supported user identifier.
  *              properties:
  *                id:
- *                  type : string 
+ *                  type: string
+ *                  description: User identifier (one of id, user_id, or firebase_uid is required)
+ *                user_id:
+ *                  type: string
+ *                firebase_uid:
+ *                  type: string
  *                username:
- *                  type: string 
+ *                  type: string
+ *                display_name:
+ *                  type: string
+ *                displayName:
+ *                  type: string
  *                email:
- *                  type: string  
- *              required:
- *                - id
- *                - username
- *                - email  
+ *                  type: string
+ *                  format: email
+ *                fcm_token:
+ *                  type: string
+ *                notification_preferences:
+ *                  type: object
+ *                  additionalProperties:
+ *                    type: boolean
+ *              anyOf:
+ *                - required: [id]
+ *                - required: [user_id]
+ *                - required: [firebase_uid]
  *      responses:
  *        '200':
  *          description: OK
@@ -120,14 +136,13 @@ export const upsert_user_controller = async (req, res) => {
  *                      type: boolean
  *                      description: Status 
  *                    message:
- *                      type: String
+ *                      type: string
  *                      description: message  
- *                    data:
- *                      type: object
- *                      description: created profile  
  *                  example: 
  *                    status: true
- *                    message: User added successfully  
+ *                    message: User created successfully
+ *        '400':
+ *          description: Missing user identifier
  *        '500':
  *          description: Internal Server Error
  *          content:

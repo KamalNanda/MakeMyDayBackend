@@ -34,11 +34,20 @@ export const fetch_messages = async (req, res) => {
  *                  description: Represents a robot config response
  *                  properties:
  *                    status:
- *                      type: string
+ *                      type: boolean
  *                      description: Status
  *                    data:
- *                      type: object
- *                      description: Response Data
+ *                      type: array
+ *                      description: Contact messages
+ *                      items:
+ *                        type: object
+ *                        properties:
+ *                          name:
+ *                            type: string
+ *                          email:
+ *                            type: string
+ *                          message:
+ *                            type: string
  *                  example:
  *                    status: true
  *                    data : []
